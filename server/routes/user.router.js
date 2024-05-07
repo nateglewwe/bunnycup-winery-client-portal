@@ -48,7 +48,6 @@ router.post('/logout', (req, res) => {
   res.sendStatus(200);
 });
 
-//User account update
 router.put('/', (req, res) => {
   const clientInfo = req.body;
   const password = encryptLib.encryptPassword(req.body.password);
@@ -81,62 +80,11 @@ router.put('/', (req, res) => {
       console.log('Client update failed');
       res.sendStatus(500);
     });
-  pool
-    .query(updateQuery, [
-      password,
-      clientInfo.id,
-      clientInfo.retailer,
-      clientInfo.discount,
-      clientInfo.paymentType,
-      clientInfo.street,
-      clientInfo.city,
-      clientInfo.state,
-      clientInfo.zip,
-    ])
-    .then((result) => {
-      console.log('Client updated successfully');
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      console.log('Client update failed');
-      res.sendStatus(500);
-    });
 });
 
-// This enables specific user account deletion.
-// Deleting a user account will not delete client information, so that order history is preserved.
 router.delete('/:id', (req, res) => {
   const deleteInfo = req.params.id;
-  const deleteQuery = `DELETE * FROM "user" WHERE "id" = $1`;
-
-  pool
-    .query(deleteQuery, [deleteInfo])
-    .then((result) => {
-      console.log('Account deletion successful');
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      console.log('Account deletion failed');
-      res.sendStatus(500);
-    });
-});
-
-// This enables specific user account deletion.
-// Deleting a user account will not delete client information, so that order history is preserved.
-router.delete('/:id', (req, res) => {
-  const deleteInfo = req.params.id;
-  const deleteQuery = `DELETE * FROM "user" WHERE "id" = $1`;
-
-  pool
-    .query(deleteQuery, [deleteInfo])
-    .then((result) => {
-      console.log('Account deletion successful');
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      console.log('Account deletion failed');
-      res.sendStatus(500);
-    });
+  const deleteQuery = ``;
 });
 
 module.exports = router;
