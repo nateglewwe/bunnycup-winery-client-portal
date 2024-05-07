@@ -23,7 +23,6 @@ router.post('/register', (req, res, next) => {
 
   const userText = `INSERT INTO "user" ("email", "password", "access_level")
                     VALUES ($1, $2, $3) RETURNING id;`;
-                  
 
   pool
     .query(userText, [username, password, 10])
@@ -33,6 +32,7 @@ router.post('/register', (req, res, next) => {
       res.sendStatus(500);
     });
 });
+
 // Handles login form authenticate/login POST
 // userStrategy.authenticate('local') is middleware that we run on this route
 // this middleware will run our POST if successful
@@ -81,6 +81,26 @@ router.put('/', (req, res) => {
       console.log('Client update failed');
       res.sendStatus(500);
     });
+  pool
+    .query(updateQuery, [
+      password,
+      clientInfo.id,
+      clientInfo.retailer,
+      clientInfo.discount,
+      clientInfo.paymentType,
+      clientInfo.street,
+      clientInfo.city,
+      clientInfo.state,
+      clientInfo.zip,
+    ])
+    .then((result) => {
+      console.log('Client updated successfully');
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.log('Client update failed');
+      res.sendStatus(500);
+    });
 });
 
 // This enables specific user account deletion.
@@ -89,15 +109,34 @@ router.delete('/:id', (req, res) => {
   const deleteInfo = req.params.id;
   const deleteQuery = `DELETE * FROM "user" WHERE "id" = $1`;
 
-  pool.query(deleteQuery, [deleteInfo])
-  .then((result) => {
-    console.log('Account deletion successful')
-    res.sendStatus(200);
-  })
-  .catch((error) => {
-    console.log('Account deletion failed')
-    res.sendStatus(500)
-  })
+  pool
+    .query(deleteQuery, [deleteInfo])
+    .then((result) => {
+      console.log('Account deletion successful');
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.log('Account deletion failed');
+      res.sendStatus(500);
+    });
+});
+
+// This enables specific user account deletion.
+// Deleting a user account will not delete client information, so that order history is preserved.
+router.delete('/:id', (req, res) => {
+  const deleteInfo = req.params.id;
+  const deleteQuery = `DELETE * FROM "user" WHERE "id" = $1`;
+
+  pool
+    .query(deleteQuery, [deleteInfo])
+    .then((result) => {
+      console.log('Account deletion successful');
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.log('Account deletion failed');
+      res.sendStatus(500);
+    });
 });
 
 module.exports = router;
